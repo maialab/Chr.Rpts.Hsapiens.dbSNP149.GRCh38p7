@@ -1,0 +1,14 @@
+Package: Chr.Rpts.Hsapiens.dbSNP149.GRCh38p7
+Type: Package
+Title: Provides NCBI's Chromosome Reports Data from dbSNP build 149, GRCh38p7.
+Version: 0.1.0
+Authors@R: person("Ramiro", "Magno", email = "ramiro.magno@gmail.com",
+  role = c("aut", "cre"))
+Maintainer: Ramiro Magno <ramiro.magno@gmail.com>
+Description: Provides dbSNP Chromosome Reports' data in data frame format.
+    The information made available by this package is the one found in 
+    ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b149_GRCh38p7/.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1

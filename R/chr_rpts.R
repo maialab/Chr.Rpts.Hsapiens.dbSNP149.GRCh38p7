@@ -1,0 +1,57 @@
+chromosomes <- c(1:22, "X", "Y", "MT")
+
+#' Read NCBI's chromosome report data for dbSNP build 149, GRCh38p7.
+#'
+#' Read chromosome report data for \emph{Homo sapiens}, from NCBI's dbSNP, build 149, Genome Reference Consortium 38, patch 7. Source data was originally downloaded from dbSNP ftp: \href{ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b149_GRCh38p7/chr_rpts/}{human_9606_b149_GRCh38p7/chr_rpts/}; then, the files were converted to rds files, one for each chromosome. The .rds files are hence loaded using this function.
+#' @param chromosome A string referring to the chromosome. Could be one of the autosomes "1"--"22", or one of the allosomes "X" or "Y", or even the mitochondrial chromosome: "MT".
+#' @return A data frame with the following columns:
+#' \enumerate{
+#'   \item \code{snp_id}, reference SNP id (does not include the "rs");
+#'   \item \code{mapweight}, a code (one of \{1, 2, 3, 4 or 5\}) which indicates how many times a SNP has been mapped to the genome. 1 = Unmapped; 2 = Mapped to single position in genome; 3 = Mapped to 2 positions on a single chromosome; 4 = Mapped to 3-10 positions in genome (possible paralog hits); 5 = Mapped to >10 positions in genome. More info at \href{https://www.ncbi.nlm.nih.gov/books/NBK44455/#Build.your_descriptions_of_mapweight_in}{SNP FAQ Archive | Map weight for chromosome reports and database tables};
+#'   \item \code{snp_type}, whether the SNP was withdrawn or not from dbSNP. 0 = Not withdrawn, 1 = Withdrawn. More info at \href{https://www.ncbi.nlm.nih.gov/books/NBK44455/#Build.why_was_rs2228570_withdrawn_form_d}{SNP FAQ Archive | Why was rs2228570 withdrawn form dbSNP?};
+#'   \item \code{chr_hits}, total number of chromosomes hit by this SNP during mapping;
+#'   \item \code{ctg_hits}, total number of contigs hit by this SNP during mapping;
+#'   \item \code{total_hits}, total number of hits to genome by this SNP during mapping;
+#'   \item \code{chr}, chromosome for this hit to genome;
+#'   \item \code{ctg_accession}, contig accession for this hit to genome;
+#'   \item \code{ctg_version}, version number of contig accession for this hit to genome;
+#'   \item \code{ctg_id}, contig ID for this hit to genome;
+#'   \item \code{ctg_position}, position of the SNP in contig coordinates;
+#'   \item \code{chr_position}, position of the SNP in chromosome coordinates;
+#'   \item \code{local_loci}, genes at this same position on the chromosome;
+#'   \item \code{avg_het}, average heterozygosity of this SNP;
+#'   \item \code{s.e._het}, standard error of average heterozygosity;
+#'   \item \code{max_prob}, maximum reported probability that the SNP is real (for computationally-predicted submissions);
+#'   \item \code{validated}, validation status. 0 = No validation information; 1 = Cluster has 2+ submissions, with 1+ submission assayed with a non-computational method; 2 = At least one subsnp in cluster has frequency data submitted; 3 = Non-computational method in cluster and frequency data present; 4 = At least one subsnp in cluster has been experimentally validated by submitter for other validation status values;
+#'   \item \code{genotypes}, whether the SNP genotypes are available in dbSNP. 1 = yes and 0 = no.
+#'   \item \code{linkouts}, whether linkout is available to submitter website for further data on the SNP. 1 = yes and 0 = no.
+#'   \item \code{orig_build}, dbSNP build ID when the SNP was first created (i.e. the create date);
+#'   \item \code{upd_build}, dbSNP build ID of the most recent change to the SNP cluster. The date of the change is represented by the build ID which has an approximate date/time associated with it.
+#'   \item \code{mapped_other_assembly}, which genome assembly is this SNP mapped to.
+#'   \item \code{suspect}, whether this is a suspected false positive SNP. 1 = yes and 0 = no. A SNP can be suspected for two reasons: (i) because of the presence of a paralogous sequence in the genome, or (ii) because of evidence that suggests sequencing errors or computation artifacts. For more info see \href{https://www.ncbi.nlm.nih.gov/projects/SNP/docs/rs_attributes.html#suspect}{Suspect false positive SNP};
+#'   \item \code{clin_sign}, clinical significance;
+#'   \item \code{allele_orig}, \href{https://www.ncbi.nlm.nih.gov/projects/SNP/docs/rs_attributes.html#origin}{allele origin};
+#'   \item \code{gmaf}, \href{https://www.ncbi.nlm.nih.gov/projects/SNP/docs/rs_attributes.html#gmaf}{global minor allele frequency}.
+#' }
+#' @export
+read_chr_rpt <- function(chromosome) {
+
+  if(!is.character(chromosome))
+    stop("chromosome argument must be a character vector.")
+
+  if(length(chromosome) != 1)
+    stop("chromosome argument must be have length 1!")
+
+  chromosome_upper <- toupper(chromosome)
+
+  if(!(chromosome_upper %in% chromosomes))
+    stop("chromosome argument must be one of: ", paste(chromosomes, collapse = ", "), ".")
+
+  chr_basename <- paste0("chr_", chromosome_upper)
+  chr_rda <- paste0(chr_basename, ".rds")
+
+  chr_rda_fullname <- system.file("extdata", chr_rda,
+                                  package = "Chr.Rpts.Hsapiens.dbSNP149.GRCh38p7")
+
+  readRDS(chr_rda_fullname)
+}
