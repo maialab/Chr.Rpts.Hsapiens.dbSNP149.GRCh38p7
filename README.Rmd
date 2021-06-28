@@ -39,6 +39,6 @@ Please note that this package occupies almost 3GB of disk space.
 
 The package contains only one function which is `read_chr_rpt`. Browse this function help page to know how to use it:
 
-``` r
+```r
 ?read_chr_rpt
 ```
